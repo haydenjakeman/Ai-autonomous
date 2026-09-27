@@ -1,49 +1,51 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pulse AI</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulse AI</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<section id="downloadScreen" class="screen">
-  <div class="orb"></div>
-  <h1>Pulse</h1>
-  <p class="sub">A small AI brain that runs in your browser.</p>
-  <div class="card">
-    <div class="info"><span>AI brain</span><strong>~300 MB</strong></div>
-    <div class="info"><span>API key</span><strong>None</strong></div>
-    <div class="info"><span>Storage</span><strong>Browser storage</strong></div>
-    <div class="bar"><i id="bar"></i></div>
-    <button id="download">Download AI Brain</button>
-    <p id="status">The model is downloaded once and cached by your browser.</p>
-    <p class="tiny">Actual storage can vary by browser and model cache. You can remove it by clearing Pulse's site data.</p>
-  </div>
-</section>
 
-<section id="app" class="app hidden">
-  <header><b>PULSE</b><span id="ready">AI ready</span></header>
-  <main id="chat"></main>
+<div class="app">
 
-  <div id="photoBox" class="photoBox hidden">
-    <img id="photo">
-    <button id="removePhoto">×</button>
-  </div>
+    <header>
+        <h1>Pulse</h1>
+        <p id="status">AI not downloaded</p>
+    </header>
 
-  <form id="composer">
-    <input id="message" placeholder="Talk to Pulse…" autocomplete="off">
-    <label class="icon">📷<input id="image" type="file" accept="image/*" capture="environment" hidden></label>
-    <button type="button" id="mic" class="icon">🎙️</button>
-    <button class="send">➤</button>
-  </form>
+    <main id="chat"></main>
 
-  <div class="controls">
-    <button id="auto">Auto-talk: OFF</button>
-    <button id="clear">Clear chat</button>
-  </div>
-  <p class="tiny bottom">Pulse uses a local browser AI model. Speech uses your browser's built-in speech features.</p>
-</section>
+    <div class="input-area">
+        <input
+            id="messageInput"
+            type="text"
+            placeholder="Ask Pulse anything..."
+            autocomplete="off"
+        >
+
+        <button id="sendButton">
+            Send
+        </button>
+    </div>
+
+    <section class="brain-section">
+
+        <button id="downloadBrainButton">
+            🧠 Download AI Brain
+        </button>
+
+        <p id="progress">
+            Download the AI brain to start.
+        </p>
+
+    </section>
+
+</div>
+
 <script type="module" src="app.js"></script>
+
 </body>
 </html>
