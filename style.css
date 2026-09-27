@@ -1,0 +1,21 @@
+*{box-sizing:border-box}
+body{margin:0;background:#07080d;color:#f5f7ff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.screen,.app{width:min(760px,100%);min-height:100vh;margin:auto;padding:20px}
+.screen{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.orb{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#9a7cff 18%,#4528ff 48%,#080912 72%);box-shadow:0 0 45px #543dff88}
+h1{font-size:40px;margin:15px 0 4px}.sub{color:#9299aa}
+.card{width:min(470px,100%);margin-top:18px;padding:20px;border-radius:20px;background:#12151d;border:1px solid #292e3b;text-align:left}
+.info{display:flex;justify-content:space-between;margin:10px 0}.info span{color:#969dad}
+.bar{height:9px;background:#272b36;border-radius:9px;overflow:hidden;margin:20px 0}.bar i{display:block;width:0;height:100%;background:#7158ff;transition:.2s}
+button{border:0;border-radius:13px;padding:12px 15px;background:#1b1f29;color:#fff;font-weight:600}
+#download{width:100%;background:#654cff;font-size:16px}
+#status{color:#9ca3b4;font-size:13px;line-height:1.45}
+.tiny{font-size:11px;color:#727a8d;line-height:1.45}.hidden{display:none!important}
+.app{display:flex;flex-direction:column}header{display:flex;justify-content:space-between;padding:4px 0 12px}header span{color:#8991a3;font-size:12px}
+#chat{flex:1;display:flex;flex-direction:column;gap:10px;padding:12px 0;min-height:330px}
+.bubble{max-width:88%;padding:12px 15px;border-radius:18px;line-height:1.45;white-space:pre-wrap}.user{align-self:flex-end;background:#6048ff}.ai{align-self:flex-start;background:#151922;border:1px solid #282d39}
+#composer{display:flex;gap:7px}.message{flex:1}
+#message{flex:1;min-width:0;border:1px solid #2a2f3b;background:#11141b;color:#fff;border-radius:14px;padding:13px}
+.icon{display:grid;place-items:center;width:46px;background:#171b24;border-radius:14px;cursor:pointer}.send{width:48px;background:#6048ff}
+.photoBox{position:relative;margin-bottom:8px}.photoBox img{width:100px;height:100px;object-fit:cover;border-radius:14px}.photoBox button{position:absolute;top:-8px;left:82px;width:25px;height:25px;padding:0;border-radius:50%}
+.controls{display:flex;gap:8px;margin-top:8px}.controls button{flex:1}.bottom{text-align:center;margin:10px 0}
