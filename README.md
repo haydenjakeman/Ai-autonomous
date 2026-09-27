@@ -1,27 +1,29 @@
 # Pulse AI
 
-A small browser-based AI called Pulse.
+Pulse is a browser-based AI assistant.
 
-## What it does
-- No API key
-- Downloads its AI brain when you press "Download AI Brain"
-- Uses browser cache so the model can be reused
-- Takes photos
-- Text chat
-- Speech-to-text when the browser supports it
-- Speaks responses with browser text-to-speech
-- Optional Auto-talk mode
+## Features
 
-## Important
-The download screen says approximately 300 MB. The real amount can differ because browser/model cache files and quantization can vary.
+- Runs an AI model in the browser
+- No personal API key required
+- Uses WebGPU when available
+- Downloads the AI model when first started
+- Can answer questions locally
+- Works as a GitHub Pages website
 
-The model is `HuggingFaceTB/SmolVLM-256M-Instruct` in 4-bit mode. The model is fetched from Hugging Face by Transformers.js; it is not bundled into this ZIP.
+## How to use
 
-For GitHub Pages:
-1. Upload all files.
-2. Make sure `index.html` is lowercase.
-3. Enable GitHub Pages from the repository's Settings > Pages.
-4. Open the generated Pages URL.
-5. Press Download AI Brain.
+1. Open Pulse.
+2. Press **Download AI Brain**.
+3. Wait for the model to finish downloading.
+4. Start chatting with Pulse.
 
-The first download requires internet. Afterward the browser may reuse its cache, subject to browser storage rules.
+## Requirements
+
+Pulse requires a modern browser with WebGPU support.
+
+The first AI download can be large and may take some time.
+
+## Privacy
+
+After the model has been downloaded, AI responses are generated locally in the browser.
