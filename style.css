@@ -21,11 +21,9 @@ body {
 .app {
     width: 100%;
     max-width: 900px;
-
     min-height: 100vh;
 
     margin: auto;
-
     padding: 20px;
 
     display: flex;
@@ -34,23 +32,18 @@ body {
 
 header {
     text-align: center;
-
     padding: 15px 0 20px;
 }
 
 header h1 {
     margin: 0;
-
     font-size: 44px;
-
     letter-spacing: -2px;
 }
 
 #status {
     margin: 8px 0 0;
-
     color: #aaa;
-
     font-size: 14px;
 }
 
@@ -68,7 +61,7 @@ header h1 {
 }
 
 .message {
-    max-width: 85%;
+    max-width: 88%;
 
     padding: 13px 16px;
 
@@ -83,7 +76,6 @@ header h1 {
 
 .message.user {
     align-self: flex-end;
-
     background: #303030;
 }
 
@@ -97,78 +89,67 @@ header h1 {
 
 .input-area {
     display: flex;
-
     gap: 8px;
 }
 
 #messageInput {
     flex: 1;
-
     min-width: 0;
 
     padding: 14px 16px;
 
     border: 1px solid #333;
-
     border-radius: 15px;
 
     outline: none;
 
     background: #151515;
-
     color: white;
 
     font-size: 16px;
 }
 
-#messageInput:focus {
-    border-color: #666;
-}
-
 button {
     border: 0;
-
     border-radius: 15px;
 
-    padding: 13px 17px;
+    padding: 13px 16px;
 
     background: white;
-
     color: black;
 
     font-weight: bold;
-
     font-size: 14px;
 
     cursor: pointer;
 }
 
-button:active {
-    transform: scale(0.98);
-}
-
 button:disabled {
-    opacity: 0.45;
-
+    opacity: 0.4;
     cursor: not-allowed;
-
-    transform: none;
 }
 
-.brain-section {
-    padding-top: 12px;
+.buttons {
+    display: flex;
+    gap: 8px;
 
-    text-align: center;
+    margin-top: 10px;
 }
 
-#downloadBrainButton {
-    width: 100%;
+.buttons button {
+    flex: 1;
+}
+
+#talkButton.active {
+    background: #55ff99;
 }
 
 #progress {
     min-height: 20px;
 
     margin: 9px 0 0;
+
+    text-align: center;
 
     color: #999;
 
@@ -186,10 +167,10 @@ button:disabled {
     }
 
     .message {
-        max-width: 92%;
+        max-width: 93%;
     }
 
-    button {
-        padding: 13px;
+    .buttons {
+        flex-direction: column;
     }
 }
