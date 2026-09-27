@@ -4,13 +4,16 @@ import {
 
 
 // =====================================================
-// PULSE AI
+// PULSE
 // =====================================================
 
 const MODEL = "Qwen3-0.6B-q4f16_1-MLC";
 
 let engine = null;
 let loading = false;
+let talkingByItself = false;
+let autonomousTimer = null;
+let generating = false;
 
 
 // =====================================================
@@ -27,9 +30,10 @@ const sendButton =
     document.getElementById("sendButton");
 
 const downloadButton =
-    document.getElementById(
-        "downloadBrainButton"
-    );
+    document.getElementById("downloadBrainButton");
+
+const talkButton =
+    document.getElementById("talkButton");
 
 const status =
     document.getElementById("status");
@@ -62,7 +66,7 @@ function addMessage(text, type) {
 
 
 // =====================================================
-// DOWNLOAD / LOAD AI BRAIN
+// DOWNLOAD AI
 // =====================================================
 
 async function downloadBrain() {
@@ -70,8 +74,6 @@ async function downloadBrain() {
     if (loading || engine) {
         return;
     }
-
-    // Check WebGPU
 
     if (!navigator.gpu) {
 
@@ -96,7 +98,6 @@ async function downloadBrain() {
     progress.textContent =
         "Starting...";
 
-
     try {
 
         engine =
@@ -107,9 +108,7 @@ async function downloadBrain() {
                     initProgressCallback:
                         (info) => {
 
-                            if (!info) {
-                                return;
-                            }
+                            if (!info) return;
 
                             if (
                                 typeof info.progress ===
@@ -131,7 +130,6 @@ async function downloadBrain() {
                                     info.text;
                             }
                         }
-
                 }
             );
 
@@ -140,22 +138,20 @@ async function downloadBrain() {
             "Pulse is ready";
 
         progress.textContent =
-            "AI downloaded successfully.";
+            "AI ready.";
 
         sendButton.disabled = false;
 
+        talkButton.disabled = false;
+
         addMessage(
-            "Hey! I'm Pulse. I'm ready to answer your questions.",
+            "Hey! I'm Pulse. I'm ready.",
             "ai"
         );
 
-
     } catch (error) {
 
-        console.error(
-            "Pulse AI error:",
-            error
-        );
+        console.error(error);
 
         engine = null;
 
@@ -163,7 +159,7 @@ async function downloadBrain() {
             "Download failed";
 
         progress.textContent =
-            "Check your internet connection, available storage, and WebGPU support.";
+            "Check your internet, storage and WebGPU support.";
 
         downloadButton.disabled =
             false;
@@ -176,7 +172,135 @@ async function downloadBrain() {
 
 
 // =====================================================
-// SEND MESSAGE
+// FAST STREAMING RESPONSE
+// =====================================================
+
+async function generateResponse(
+    userText,
+    autonomous = false
+) {
+
+    if (!engine || generating) {
+        return;
+    }
+
+    generating = true;
+
+    const replyBox =
+        addMessage(
+            autonomous
+                ? ""
+                : "Thinking...",
+            "ai"
+        );
+
+    try {
+
+        const messages = autonomous
+
+            ? [
+                {
+                    role: "system",
+                    content:
+                        `You are Pulse, a friendly AI.
+
+You are allowed to start conversations
+by yourself when the user has enabled
+"Talk by itself".
+
+Say something short and natural.
+Do not claim to have feelings or real
+experiences that you don't have.
+
+Keep it interesting and conversational.`
+                },
+
+                {
+                    role: "user",
+                    content:
+                        "Start a short conversation with me."
+                }
+            ]
+
+            : [
+                {
+                    role: "system",
+                    content:
+                        `You are Pulse, a helpful,
+friendly AI assistant.
+
+Give clear and useful answers.
+
+Keep answers reasonably concise
+unless the user asks for detail.`
+                },
+
+                {
+                    role: "user",
+                    content: userText
+                }
+            ];
+
+
+        // STREAM THE ANSWER
+        // This makes Pulse display tokens
+        // as they are generated.
+
+        const stream =
+            await engine.chat.completions.create({
+
+                messages,
+
+                temperature: 0.7,
+
+                max_tokens: autonomous
+                    ? 80
+                    : 384,
+
+                stream: true
+            });
+
+
+        let answer = "";
+
+        replyBox.textContent = "";
+
+        for await (
+            const chunk of stream
+        ) {
+
+            const piece =
+                chunk.choices?.[0]?.delta?.content
+                || "";
+
+            if (!piece) continue;
+
+            answer += piece;
+
+            replyBox.textContent =
+                answer;
+
+            chat.scrollTop =
+                chat.scrollHeight;
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        replyBox.textContent =
+            "Sorry, something went wrong.";
+
+    } finally {
+
+        generating = false;
+    }
+}
+
+
+// =====================================================
+// NORMAL MESSAGE
 // =====================================================
 
 async function sendMessage() {
@@ -184,17 +308,7 @@ async function sendMessage() {
     const text =
         input.value.trim();
 
-    if (!text) {
-        return;
-    }
-
-    if (!engine) {
-
-        addMessage(
-            "Please download the AI brain first.",
-            "ai"
-        );
-
+    if (!text || !engine || generating) {
         return;
     }
 
@@ -207,74 +321,10 @@ async function sendMessage() {
 
     sendButton.disabled = true;
 
-
-    const reply =
-        addMessage(
-            "Thinking...",
-            "ai"
-        );
-
-
-    try {
-
-        const response =
-            await engine.chat.completions.create({
-
-                messages: [
-
-                    {
-                        role: "system",
-
-                        content:
-                            `You are Pulse, a friendly,
-helpful AI assistant.
-
-Answer questions clearly and accurately.
-
-If you don't know something,
-say that you don't know.
-
-Do not pretend to have abilities
-you don't have.`
-                    },
-
-                    {
-                        role: "user",
-
-                        content: text
-                    }
-
-                ],
-
-                temperature: 0.7,
-
-                max_tokens: 512
-            });
-
-
-        const answer =
-            response
-                .choices[0]
-                .message
-                .content;
-
-
-        reply.textContent =
-            answer;
-
-
-    } catch (error) {
-
-        console.error(
-            "Generation error:",
-            error
-        );
-
-        reply.textContent =
-            "Sorry, I couldn't generate an answer.";
-
-    }
-
+    await generateResponse(
+        text,
+        false
+    );
 
     sendButton.disabled = false;
 
@@ -283,8 +333,131 @@ you don't have.`
 
 
 // =====================================================
-// SEND BUTTON
+// TALK BY ITSELF
 // =====================================================
+
+function startAutonomousTalking() {
+
+    if (!engine) {
+        return;
+    }
+
+    talkingByItself = true;
+
+    talkButton.textContent =
+        "🗣️ Talk by itself: ON";
+
+    talkButton.classList.add(
+        "active"
+    );
+
+    // First automatic message
+    // after a short delay.
+
+    autonomousTimer =
+        setTimeout(
+            autonomousMessage,
+            3000
+        );
+}
+
+
+function stopAutonomousTalking() {
+
+    talkingByItself = false;
+
+    talkButton.textContent =
+        "🗣️ Talk by itself: OFF";
+
+    talkButton.classList.remove(
+        "active"
+    );
+
+    if (autonomousTimer) {
+
+        clearTimeout(
+            autonomousTimer
+        );
+
+        autonomousTimer = null;
+    }
+}
+
+
+function autonomousMessage() {
+
+    if (
+        !talkingByItself ||
+        !engine
+    ) {
+        return;
+    }
+
+    if (generating) {
+
+        autonomousTimer =
+            setTimeout(
+                autonomousMessage,
+                5000
+            );
+
+        return;
+    }
+
+    generateResponse(
+        "",
+        true
+    ).finally(() => {
+
+        if (!talkingByItself) {
+            return;
+        }
+
+        // Wait 20–40 seconds before
+        // Pulse speaks again.
+
+        const delay =
+            20000 +
+            Math.random() * 20000;
+
+        autonomousTimer =
+            setTimeout(
+                autonomousMessage,
+                delay
+            );
+    });
+}
+
+
+// =====================================================
+// TALK BUTTON
+// =====================================================
+
+talkButton.addEventListener(
+    "click",
+    () => {
+
+        if (!engine) {
+            return;
+        }
+
+        if (talkingByItself) {
+            stopAutonomousTalking();
+        } else {
+            startAutonomousTalking();
+        }
+    }
+);
+
+
+// =====================================================
+// BUTTONS
+// =====================================================
+
+downloadButton.addEventListener(
+    "click",
+    downloadBrain
+);
 
 sendButton.addEventListener(
     "click",
@@ -293,22 +466,12 @@ sendButton.addEventListener(
 
 
 // =====================================================
-// DOWNLOAD BUTTON
-// =====================================================
-
-downloadButton.addEventListener(
-    "click",
-    downloadBrain
-);
-
-
-// =====================================================
-// ENTER TO SEND
+// ENTER
 // =====================================================
 
 input.addEventListener(
     "keydown",
-    function(event) {
+    event => {
 
         if (
             event.key === "Enter"
@@ -318,7 +481,6 @@ input.addEventListener(
 
             sendMessage();
         }
-
     }
 );
 
@@ -329,12 +491,10 @@ input.addEventListener(
 
 sendButton.disabled = true;
 
+talkButton.disabled = true;
+
 status.textContent =
     "AI not downloaded";
 
 progress.textContent =
     "Tap Download AI Brain to begin.";
-
-console.log(
-    "Pulse AI loaded."
-);
